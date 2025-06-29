@@ -1,0 +1,14 @@
+securityContext:
+  fsGroup: null
+  runAsGroup: null
+  runAsNonRoot: true
+  runAsUser: 1000150001
+
+log:
+  level: debug
+
+persistence:
+  enabled: false
+
+
+
