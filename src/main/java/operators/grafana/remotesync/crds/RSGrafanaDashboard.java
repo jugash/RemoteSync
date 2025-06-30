@@ -8,4 +8,6 @@ import io.fabric8.kubernetes.model.annotation.Version;
 
 @Group("monitoring.com")
 @Version("v1")
-public class RSGrafanaDashboard extends CustomResource<RSGrafanaDashboardSpec, RSGrafanaDashboardStatus> implements Namespaced {}
+public class RSGrafanaDashboard
+        extends CustomResource<RSGrafanaDashboardSpec, RSGrafanaDashboardStatus>
+        implements Namespaced {}

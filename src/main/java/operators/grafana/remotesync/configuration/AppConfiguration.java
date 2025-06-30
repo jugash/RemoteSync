@@ -1,6 +1,6 @@
 package operators.grafana.remotesync.configuration;
 
-import operators.grafana.remotesync.controller.GrafanaReconciler;
+import operators.grafana.remotesync.controller.GrafanaDashboardReconciler;
 import operators.grafana.remotesync.services.GrafanaService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,7 @@ public class AppConfiguration {
     }
 
     @Bean
-    public GrafanaReconciler grafanaReconciler(GrafanaService grafanaService) {
-        return new GrafanaReconciler(grafanaService);
+    public GrafanaDashboardReconciler grafanaDashboardReconciler(GrafanaService grafanaService) {
+        return new GrafanaDashboardReconciler(grafanaService);
     }
 }

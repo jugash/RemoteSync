@@ -2,13 +2,10 @@ package operators.grafana.remotesync.services;
 
 import java.util.Objects;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import operators.grafana.remotesync.model.DashboardPayload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
@@ -29,13 +26,26 @@ public class GrafanaService {
                 .build();
     }
 
+    GrafanaService(RestClient restClient) {
+        this.restClient = restClient;
+    }
+
     public void syncDashboard(String dashboardJson) {
-        restClient.post()
+        try {
+            String response = restClient.post()
                 .uri("/api/dashboards/db")
                 .body(dashboardJson)
                 .retrieve()
-                .toEntity(String.class)
-                .getBody();
+                .body(String.class);
+            logger.info("Dashboard synced successfully: {}", response != null ? response : "no response body");
+
+        } catch (RestClientResponseException e) {
+            logger.error("Failed to sync dashboard: {} {}", e.getStatusCode(), e.getResponseBodyAsString());
+            throw new RuntimeException("Failed to sync dashboard: " + e.getMessage());
+        } catch (Exception e) {
+            logger.error("Error syncing dashboard to Grafana", e);
+            throw new RuntimeException("Failed to sync dashboard: " + e.getMessage());
+        }
     }
 
     public void syncAlertRule(String alertRuleJson) {

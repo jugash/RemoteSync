@@ -8,7 +8,7 @@ import io.javaoperatorsdk.operator.api.ObservedGenerationAwareStatus;
 public class RSGrafanaDashboardStatus extends ObservedGenerationAwareStatus {
     private String uid;
     private String lastSyncedChecksum;
-    private String state;
+    private Status state;
     private String message;
 
     public String getUid() { return uid; }
@@ -19,8 +19,8 @@ public class RSGrafanaDashboardStatus extends ObservedGenerationAwareStatus {
         this.lastSyncedChecksum = lastSyncedChecksum;
     }
 
-    public String getState() { return state; }
-    public void setState(String state) { this.state = state; }
+    public Status getState() { return state; }
+    public void setState(Status state) { this.state = state; }
 
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
