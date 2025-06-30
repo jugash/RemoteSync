@@ -1,0 +1,16 @@
+replicaCount: 1
+
+image:
+  repository: jugash/rs-grafana-operator
+  tag: 1.0-SNAPSHOT
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  name: "rs-grafana-operator"
+
+resources: {}
+

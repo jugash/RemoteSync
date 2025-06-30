@@ -1,0 +1,6 @@
+apiVersion: v2
+name: rs-grafana-operator
+description: A Helm chart for deploying the Java-based Grafana RemoteSync operator
+type: application
+version: 0.1.0
+appVersion: "1.0"

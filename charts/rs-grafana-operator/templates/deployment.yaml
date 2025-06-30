@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "rs-grafana-operator.fullname" . }}
+  labels:
+    {{- include "rs-grafana-operator.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "rs-grafana-operator.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "rs-grafana-operator.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      serviceAccountName: {{ include "rs-grafana-operator.serviceAccountName" . }}
+      containers:
+        - name: operator
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: actuator
+              containerPort: 8081
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: actuator
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 2
+            failureThreshold: 3
+          env:
+            - name: GRAFANA_URL
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-credentials
+                  key: url
+            - name: GRAFANA_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-credentials
+                  key: apiKey
+          resources: {{ toYaml .Values.resources | nindent 12 }}

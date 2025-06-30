@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.5'
     id 'io.spring.dependency-management' version '1.1.4'
+    id 'com.google.cloud.tools.jib' version '3.4.1' // <-- Jib plugin added
 }
 
 group = 'operators.grafana'
@@ -13,28 +14,21 @@ repositories {
 }
 
 dependencies {
-    // Java Operator SDK Spring Boot Starter
     implementation 'io.javaoperatorsdk:operator-framework-spring-boot-starter:5.4.0'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
-    // YAML parsing
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.yaml:snakeyaml:1.29'
-
-    // BouncyCastle crypto
     implementation 'org.bouncycastle:bcprov-jdk18on:1.77'
     implementation 'org.bouncycastle:bcpkix-jdk18on:1.77'
-
-    // Apache HTTP client
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
 
-    // CRD Generator (annotation processor, provided at compile time only)
     compileOnly 'io.fabric8:crd-generator-apt:6.9.2'
     annotationProcessor 'io.fabric8:crd-generator-apt:6.9.2'
 
-    // Test dependencies
     testImplementation 'io.javaoperatorsdk:operator-framework-spring-boot-starter-test:5.4.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
+
 
 tasks.named('test') {
     useJUnitPlatform()
@@ -42,4 +36,26 @@ tasks.named('test') {
 
 configurations.all {
     exclude group: 'org.apache.logging.log4j', module: 'log4j-slf4j2-impl'
+}
+
+
+jib {
+    from {
+        image = 'eclipse-temurin:17-jre'
+    }
+    to {
+        image = 'docker.io/jugash/rs-grafana-operator'
+        tags = ['latest', version]
+        auth {
+            username = System.getenv('REGISTRY_USERNAME')
+            password = System.getenv('REGISTRY_PASSWORD')
+        }
+    }
+    container {
+        ports = ['8080', '8081']
+        creationTime = 'USE_CURRENT_TIMESTAMP'
+        environment = [
+            'JAVA_TOOL_OPTIONS': '-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0'
+        ]
+    }
 }

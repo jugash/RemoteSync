@@ -15,18 +15,7 @@ public class GrafanaService {
 
     private final RestClient restClient;
 
-    public GrafanaService(String grafanaUrl, String apiKey) {
-        Objects.requireNonNull(grafanaUrl, "GRAFANA_URL must be set");
-        Objects.requireNonNull(apiKey, "GRAFANA_API_KEY must be set");
-
-        this.restClient = RestClient.builder()
-                .baseUrl(grafanaUrl)
-                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
-    }
-
-    GrafanaService(RestClient restClient) {
+    public GrafanaService(RestClient restClient) {
         this.restClient = restClient;
     }
 
